@@ -126,15 +126,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DebugUtility.cpp" />
-    <ClCompile Include="FunctionCommentator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PrintFunction.cpp" />
-    <ClCompile Include="PrintFunction.hpp" />
+    <ClCompile Include="PrintFunction.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DebugUtility.h" />
-    <ClInclude Include="FunctionCommentator.h" />
+    <ClInclude Include="FunctionPrint.h" />
     <ClInclude Include="Macro.h" />
+    <ClInclude Include="PrintVariable.h" />
     <ClInclude Include="TemplateStrings.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

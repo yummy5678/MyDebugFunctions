@@ -1,7 +1,7 @@
 #pragma once
 
 // 変数名を文字列として取得するマクロ
-#define THIS_PARAM_NAME(param) #param
+#define THIS_VARIABLE_NAME(variable) #variable
 
 // ファイル名を文字列として取得するマクロ
 #define THIS_FILE_NAME __FILE__
