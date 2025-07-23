@@ -5,8 +5,8 @@
 #include "TimeUtility.h"
 
 // 関数の導入から終了までを出力するマクロ
-#define DEBUG_FUNCTION_INFO DebugPrint::FunctionCommentator _funcInfo(THIS_FUNCTION_NAME, THIS_FILE_NAME, THIS_LINE_NUMBER)
-#define DEBUG_FUNCTION_INFO_COLOR(color) DebugPrint::FunctionCommentator _funcColorInfo(THIS_FUNCTION_NAME, THIS_FILE_NAME, THIS_LINE_NUMBER, color)
+#define PRINT_FUNCTION DebugPrint::FunctionCommentator _funcInfo(THIS_FUNCTION_NAME, THIS_FILE_NAME, THIS_LINE_NUMBER)
+#define PRINT_FUNCTION_COLOR(color) DebugPrint::FunctionCommentator _funcColorInfo(THIS_FUNCTION_NAME, THIS_FILE_NAME, THIS_LINE_NUMBER, color)
 
 
 

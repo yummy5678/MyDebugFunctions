@@ -8,7 +8,7 @@
 
 int main(int argc, char* argv[])
 {
-    DEBUG_FUNCTION_INFO;
+    PRINT_FUNCTION;
 
     PrintMessage("PrintMessage(Default)\n");
     PrintMessage("PrintMessage(Color)\n", PRINT_COLOR::BLUE);
@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
     PRINT_ERROR_MESSAGE_COLOR("マクロ版メッセージ表示\n", PRINT_COLOR::GREEN);
     PRINT_ERROR_MESSAGE("マクロ版メッセージ表示\n");
 
-    DEBUG_FUNCTION_INFO_COLOR(PRINT_COLOR::BLUE);
+    PRINT_FUNCTION_COLOR(PRINT_COLOR::BLUE);
 
     return EXIT_SUCCESS;
 }
