@@ -1,9 +1,8 @@
 #pragma once
 #include <cstdlib>
 #include <iostream>
-#include "PrintFunction.h"
-#include "FunctionPrint.h"
-#include "PrintVariable.h"
+#include "DebugPrint.h"
+
 
 
 
@@ -23,10 +22,15 @@ int main(int argc, char* argv[])
 
     PRINT_VARIABLE(a);    // a = 10
     PRINT_VARIABLE(arr);  // arr = [1, 2, 3]
-    PRINT_VARIABLE(vec);  // vec = [Alice, Bob]
+    PRINT_VARIABLE_COLOR(vec, PRINT_COLOR::BLUE);  // vec = [Alice, Bob]
     PRINT_VARIABLE(ary);  // ary = [3.14, 2.71, 1.61]
 
-    DEBUG_FUNCTION_INFO(PRINT_COLOR::BLUE);
+    PRINT_MESSAGE_COLOR("マクロ版メッセージ表示\n", PRINT_COLOR::MAGENTA);
+    PRINT_MESSAGE("マクロ版メッセージ表示\n");
+    PRINT_ERROR_MESSAGE_COLOR("マクロ版メッセージ表示\n", PRINT_COLOR::GREEN);
+    PRINT_ERROR_MESSAGE("マクロ版メッセージ表示\n");
+
+    DEBUG_FUNCTION_INFO_COLOR(PRINT_COLOR::BLUE);
 
     return EXIT_SUCCESS;
 }

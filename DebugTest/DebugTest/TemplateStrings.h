@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-namespace DebugUtility
+namespace DebugPrint
 {
 	static const std::string datetimeFormat			= "%Y-%m-%d %H:%M:%S%z";   // 時間の表現方法
 

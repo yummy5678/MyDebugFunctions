@@ -125,13 +125,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DebugUtility.cpp" />
+    <ClCompile Include="TimeUtility.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PrintFunction.cpp" />
     <ClCompile Include="PrintFunction.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DebugUtility.h" />
+    <ClInclude Include="DebugPrint.h" />
+    <ClInclude Include="TimeUtility.h" />
     <ClInclude Include="FunctionPrint.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="PrintVariable.h" />

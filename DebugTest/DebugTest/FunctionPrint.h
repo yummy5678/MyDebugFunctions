@@ -2,14 +2,15 @@
 #include "Macro.h"
 #include "PrintFunction.h"
 #include "TemplateStrings.h"
-#include "DebugUtility.h"
+#include "TimeUtility.h"
+
+// 関数の導入から終了までを出力するマクロ
+#define DEBUG_FUNCTION_INFO DebugPrint::FunctionCommentator _funcInfo(THIS_FUNCTION_NAME, THIS_FILE_NAME, THIS_LINE_NUMBER)
+#define DEBUG_FUNCTION_INFO_COLOR(color) DebugPrint::FunctionCommentator _funcColorInfo(THIS_FUNCTION_NAME, THIS_FILE_NAME, THIS_LINE_NUMBER, color)
 
 
-#define DEBUG_FUNCTION_INFO DebugUtility::FunctionCommentator _funcInfo(THIS_FUNCTION_NAME, THIS_FILE_NAME, THIS_LINE_NUMBER)
 
-
-
-namespace DebugUtility
+namespace DebugPrint
 {
     class FunctionCommentator
     {

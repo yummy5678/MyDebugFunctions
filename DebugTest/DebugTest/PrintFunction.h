@@ -2,6 +2,14 @@
 #include <string>
 #include <iostream>
 
+// 文字出力関数のマクロ版
+#define PRINT_MESSAGE(message) PrintMessage(message)
+#define PRINT_MESSAGE_COLOR(message, color) PrintMessage(message, color)
+
+#define PRINT_ERROR_MESSAGE(message) PrintErrorMessage(message)
+#define PRINT_ERROR_MESSAGE_COLOR(message, color) PrintErrorMessage(message, color)
+
+
 // 簡易カラー表
 enum class PRINT_COLOR
 {
@@ -27,3 +35,4 @@ void PrintMessage(const std::string& message, PRINT_COLOR color = PRINT_COLOR::D
 
 // 標準エラー出力ストリーム
 void PrintErrorMessage(const std::string& message, PRINT_COLOR color = PRINT_COLOR::YELLOW);
+

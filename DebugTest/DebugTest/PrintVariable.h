@@ -9,9 +9,10 @@
 #include "TemplateStrings.h"
 
 // ===== 汎用表示 =====
-#define PRINT_VARIABLE(variable) DebugUtility::PrintVariable(#variable, variable)
+#define PRINT_VARIABLE(variable) DebugPrint::PrintVariable(#variable, variable)
+#define PRINT_VARIABLE_COLOR(variable, color) DebugPrint::PrintVariable(#variable, variable, color)
 
-namespace DebugUtility
+namespace DebugPrint
 {
     // ===== 判定ヘルパー =====
     // C配列判定
