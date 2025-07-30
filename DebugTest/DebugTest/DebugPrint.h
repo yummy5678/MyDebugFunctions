@@ -1,5 +1,5 @@
 #pragma once
 
 #include "PrintFunction.h"
-#include "FunctionPrint.h"
+#include "PrintTracer.h"
 #include "PrintVariable.h"

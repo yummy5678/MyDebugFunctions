@@ -129,10 +129,11 @@
     <ClCompile Include="PrintFunction.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ColorDefine.h" />
     <ClInclude Include="DebugPrint.h" />
     <ClInclude Include="TimeUtility.h" />
-    <ClInclude Include="FunctionPrint.h" />
-    <ClInclude Include="Macro.h" />
+    <ClInclude Include="PrintTracer.h" />
+    <ClInclude Include="MacroList.h" />
     <ClInclude Include="PrintVariable.h" />
     <ClInclude Include="TemplateStrings.h" />
   </ItemGroup>

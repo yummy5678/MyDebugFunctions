@@ -45,7 +45,7 @@ namespace DebugPrint
     // 通常型(配列以外)
     template <typename T>
     std::enable_if_t<!is_array_like<T>::value>  // std::enable_if を使った「SFINAE(条件付き関数有効化)
-        PrintVariable(const char* name, const T& var, PRINT_COLOR color = PRINT_COLOR::DEFAULT)
+        PrintVariable(const char* name, const T& var, Color color = PRINT_COLOR::DEFAULT)
     {
         std::ostringstream outputString;
         // 変数: [変数名]  値: [変数の中身]
@@ -56,7 +56,7 @@ namespace DebugPrint
 
     // C配列
     template <typename T, std::size_t N>  
-    void PrintVariable(const std::string& varName, const T(&arr)[N], PRINT_COLOR color = PRINT_COLOR::DEFAULT)
+    void PrintVariable(const std::string& varName, const T(&arr)[N], Color color = PRINT_COLOR::DEFAULT)
     {
         std::ostringstream outputString;
 
@@ -76,7 +76,7 @@ namespace DebugPrint
     // std::vector / std::array 共通
     template <typename Container>
     std::enable_if_t<is_array_like<Container>::value && !std::is_array<Container>::value>
-        PrintVariable(const std::string& varName, const Container& container, PRINT_COLOR color = PRINT_COLOR::DEFAULT)
+        PrintVariable(const std::string& varName, const Container& container, Color color = PRINT_COLOR::DEFAULT)
     {
         std::ostringstream outputString;
 
