@@ -29,27 +29,24 @@ namespace DebugPrint
             m_Color = color;
             std::string functionName = func_name;
             std::string fileName = file_name;
-           
-            PrintMessage(separatorString, m_Color);
+
+            PrintMessage(separatorString(), m_Color);
             PrintMessage(GetDateTimeString() + "\n", m_Color);
-            PrintMessage(fileString + pairSeparatorString + fileName + "\n" +
-                LineNumberString + pairSeparatorString +
+            PrintMessage(fileString() + pairSeparatorString() + fileName + "\n" +
+                LineNumberString() + pairSeparatorString() +
                 std::to_string(line_number) + "\n", m_Color);
             PrintMessage(functionName, m_Color);
-            PrintMessage(startFunctionString, m_Color);
-
+            PrintMessage(startFunctionString(), m_Color);
         }
 
 
-        ~FunctionTracer() noexcept 
+        ~FunctionTracer() noexcept
         {
-            PrintMessage(endFunctionString, m_Color);
-
-            PrintMessage(endTimerString, m_Color);
+            PrintMessage(endFunctionString(), m_Color);
+            PrintMessage(endTimerString(), m_Color);
             PrintMessage(m_Timer.GetElapsedSecTime(), m_Color);
-            PrintMessage(secondsString + "\n", m_Color);
-
-            PrintMessage(separatorString, m_Color);
+            PrintMessage(secondsString() + "\n", m_Color);
+            PrintMessage(separatorString(), m_Color);
         }
 
         FunctionTracer& operator =(const FunctionTracer&) = delete;
@@ -70,12 +67,12 @@ namespace DebugPrint
         {
             m_ClassName = class_name;
             m_Color = color;
-            PrintMessage(m_ClassName + startClassString, m_Color);
+            PrintMessage(m_ClassName + startClassString(), m_Color);
         }
 
         ~ClassTracer()
         {
-            PrintMessage(m_ClassName + endClassString, m_Color);
+            PrintMessage(m_ClassName + endClassString(), m_Color);
         }
 
         std::string m_ClassName;

@@ -1,0 +1,19 @@
+{
+  "datetimeFormat": "%Y-%m-%d %H:%M:%S%z",
+  "pairSeparator": ": ",
+  "separator": "=================================\n",
+  "functionName": "Function",
+  "startFunction": "Function started\n",
+  "endFunction": "Function ended\n",
+  "startClass": "Constructor started\n",
+  "endClass": "Destructor ended\n",
+  "endTimer": "Elapsed time",
+  "seconds": "sec",
+  "file": "File",
+  "value": "Value ",
+  "lineNumber": "Line",
+  "variable": "Variable",
+  "open": "[",
+  "close": "]",
+  "errorDialogTitle": "Error"
+}

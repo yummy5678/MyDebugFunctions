@@ -1,0 +1,19 @@
+{
+  "datetimeFormat": "%Y-%m-%d %H:%M:%S%z",
+  "pairSeparator": ": ",
+  "separator": "=================================\n",
+  "functionName": "関数名",
+  "startFunction": "関数を開始します\n",
+  "endFunction": "関数を終了します\n",
+  "startClass": "コンストラクタを開始します\n",
+  "endClass": "デストラクタを終了します\n",
+  "endTimer": "関数終了までの経過時間",
+  "seconds": "秒",
+  "file": "ファイル",
+  "value": "値 ",
+  "lineNumber": "行番号",
+  "variable": "変数",
+  "open": "[",
+  "close": "]",
+  "errorDialogTitle": "エラー"
+}

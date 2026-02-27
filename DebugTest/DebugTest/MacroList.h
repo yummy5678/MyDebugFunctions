@@ -2,9 +2,6 @@
 
 
 
-
-
-
 // ファイル名を文字列として取得するマクロ
 #define THIS_FILE_NAME __FILE__
 

@@ -4,17 +4,22 @@
 #include <ctime>         // 時間処理用
 #include <iomanip>       // 出力フォーマット用
 #include <sstream>       // 文字列ストリーム用
-
+#include "TemplateStrings.h"
 
 
 namespace DebugPrint
 {
-    constexpr const char* defaultTimeFormat = "%Y-%m-%d %H:%M:%S%z";   // 時間の表現方法
-
 
     // 時間取得用関数
-    inline std::string GetDateTimeString(const char* timeFormat = defaultTimeFormat)
+    inline std::string GetDateTimeString(const char* timeFormat = nullptr)
     {
+
+        // timeFormat が指定されていない場合は設定から取得する
+        if (timeFormat == nullptr)
+        {
+            timeFormat = TemplateStrings::GetInstance().Get(keyDatetimeFormat).c_str();
+        }
+
         // 現在時刻をシステムクロックから取得
         auto now = std::chrono::system_clock::now();
 

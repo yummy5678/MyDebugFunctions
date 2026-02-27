@@ -102,7 +102,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>../source/;../include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -117,7 +118,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>../source/;../include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -125,12 +127,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\source\tinyfiledialogs\tinyfiledialogs.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PrintFunction.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\tinyfiledialogs\tinyfiledialogs.h" />
     <ClInclude Include="ColorDefine.h" />
     <ClInclude Include="DebugPrint.h" />
+    <ClInclude Include="DebugPrintConfig.h" />
+    <ClInclude Include="LogWriter.h" />
+    <ClInclude Include="PrintMacroList.h" />
+    <ClInclude Include="PrintStruct.h" />
     <ClInclude Include="TimeUtility.h" />
     <ClInclude Include="PrintTracer.h" />
     <ClInclude Include="MacroList.h" />

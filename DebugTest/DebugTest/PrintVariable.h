@@ -7,10 +7,8 @@
 #include <type_traits>
 #include "PrintFunction.h"
 #include "TemplateStrings.h"
+#include "magic_enum/magic_enum.hpp"
 
-// ===== 汎用表示 =====
-#define PRINT_VARIABLE(variable) DebugPrint::PrintVariable(#variable, variable)
-#define PRINT_VARIABLE_COLOR(variable, color) DebugPrint::PrintVariable(#variable, variable, color)
 
 namespace DebugPrint
 {
@@ -35,43 +33,52 @@ namespace DebugPrint
 
     // 総合判定(コンテナかどうか)
     template <typename T>
-    struct is_array_like : std::disjunction<
+    struct is_array_like : std::disjunction< 
         std::is_array<T>,
         is_vector<T>,
         is_std_array<T>
     > {
     };
 
-    // 通常型(配列以外)
+    // 列挙型(enum / enum class)の場合 → magic_enum で文字列に変換して表示
     template <typename T>
-    std::enable_if_t<!is_array_like<T>::value>  // std::enable_if を使った「SFINAE(条件付き関数有効化)
+    std::enable_if_t<std::is_enum<T>::value>
         PrintVariable(const char* name, const T& var, Color color = PRINT_COLOR::DEFAULT)
     {
         std::ostringstream outputString;
-        // 変数: [変数名]  値: [変数の中身]
-        outputString << variableString << pairSeparatorString << name << "  ";
-        outputString << valueString << pairSeparatorString << var << "\n";
-        PrintMessage(outputString.str(), color);  // 色つき出力
+        outputString << variableString() << pairSeparatorString() << name << "  ";
+        outputString << valueString() << pairSeparatorString() << magic_enum::enum_name(var) << "\n";
+        PrintMessage(outputString.str(), color);
+    }
+
+    // 通常型(配列・列挙型以外)
+    template <typename T>
+    std::enable_if_t<!is_array_like<T>::value && !std::is_enum<T>::value>
+        PrintVariable(const char* name, const T& var, Color color = PRINT_COLOR::DEFAULT)
+    {
+        static_assert(requires(std::ostream & os, const T & v) { os << v; },
+            "PRINT_VARIABLE は << 演算子が定義されていない型には使用できません。"
+            "構造体の場合は PRINT_STRUCT を使用してください");
+
+        std::ostringstream outputString;
+        outputString << variableString() << pairSeparatorString() << name << "  ";
+        outputString << valueString() << pairSeparatorString() << var << "\n";
+        PrintMessage(outputString.str(), color);
     }
 
     // C配列
-    template <typename T, std::size_t N>  
+    template <typename T, std::size_t N>
     void PrintVariable(const std::string& varName, const T(&arr)[N], Color color = PRINT_COLOR::DEFAULT)
     {
         std::ostringstream outputString;
-
-        // 変数名 [ 要素数 ] :(改行)
-        outputString << variableString << varName
-            << openString << N << closeString << pairSeparatorString << "\n";
+        outputString << variableString() << varName
+            << openString() << N << closeString() << pairSeparatorString() << "\n";
         for (size_t i = 0; i < N; ++i)
         {
-            // [表示番号] : 数値 (改行)
-            outputString << openString << i << closeString << pairSeparatorString << arr[i] << "\n";
+            outputString << openString() << i << closeString() << pairSeparatorString() << arr[i] << "\n";
         }
-
-        PrintMessage(outputString.str(), color);  // 最終結果を出力
+        PrintMessage(outputString.str(), color);
     }
-
 
     // std::vector / std::array 共通
     template <typename Container>
@@ -79,22 +86,14 @@ namespace DebugPrint
         PrintVariable(const std::string& varName, const Container& container, Color color = PRINT_COLOR::DEFAULT)
     {
         std::ostringstream outputString;
-
-        // 変数名 [ 要素数 ] :(改行)
-        outputString << variableString << varName
-            << openString << container.size() << closeString << pairSeparatorString << "\n";
+        outputString << variableString() << varName
+            << openString() << container.size() << closeString() << pairSeparatorString() << "\n";
 
         size_t index = 0;
         for (const auto& value : container)
         {
-            // [要素番号] : 数値 (改行)
-            outputString << openString << index++ << closeString << pairSeparatorString << value << "\n";
+            outputString << openString() << index++ << closeString() << pairSeparatorString() << value << "\n";
         }
-
-        PrintMessage(outputString.str(), color);  // 最終結果を出力
+        PrintMessage(outputString.str(), color);
     }
-
 }
-
-
-
