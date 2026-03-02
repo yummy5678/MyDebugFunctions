@@ -4,7 +4,7 @@
 #include "PrintVariable.h"
 #include "PrintStruct.h"
 #include "PrintFunction.h"
-
+#include "PrintTracer.h"
 
 // 変数表示マクロ
 #define PRINT_VARIABLE(variable) \
@@ -45,12 +45,15 @@
     DebugPrint::ShowPopupErrorMessage(message, THIS_FUNCTION_NAME, THIS_FILE_NAME, THIS_LINE_NUMBER)
 
 
-
 // ===== Config 設定マクロ =====
 
 // 言語を切り替えるマクロ
 #define DEBUG_SET_LANGUAGE(lang) \
-    DebugPrint::DebugPrintConfig::GetInstance().SetLanguage(lang)
+    DebugPrint::TemplateStrings::GetInstance().SetLanguage(lang)
+
+// 言語ファイルのディレクトリパスを設定するマクロ
+#define DEBUG_SET_LANGUAGE_PATH(path) \
+    DebugPrint::TemplateStrings::GetInstance().SetLanguagePath(path)
 
 // 日時フォーマットを変更するマクロ
 #define DEBUG_SET_DATETIME_FORMAT(format) \
@@ -92,7 +95,15 @@
 #define DEBUG_WRITE_LOG(path) \
     DebugPrint::LogWriter::GetInstance().WriteToFile(path)
 
-
 // ログエントリを消去するマクロ
 #define DEBUG_CLEAR_LOG() \
     DebugPrint::LogWriter::GetInstance().Clear()
+
+// 関数の導入から終了までを出力するマクロ
+#define PRINT_TRACE_FUNCTION                DebugPrint::FunctionTracer _funcInfo(THIS_FUNCTION_NAME, THIS_FILE_NAME, THIS_LINE_NUMBER)
+#define PRINT_TRACE_FUNCTION_COLOR(color)   DebugPrint::FunctionTracer _funcColorInfo(THIS_FUNCTION_NAME, THIS_FILE_NAME, THIS_LINE_NUMBER, color)
+
+// クラスのコンストラクタ・デストラクタを出力するマクロ
+#define PRINT_TRACE_CLASS(name)                 DebugPrint::ClassTracer _classTracer{#name}
+#define PRINT_TRACE_CLASS_COLOR(name, color)    DebugPrint::ClassTracer _classColorTracer{#name, color}
+

@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -7,40 +6,45 @@
 #include <type_traits>
 #include "PrintFunction.h"
 #include "TemplateStrings.h"
-#include "magic_enum/magic_enum.hpp"
-
+#include "../third_party/magic_enum/magic_enum.hpp"
 
 namespace DebugPrint
 {
-    // ===== 判定ヘルパー =====
-    // C配列判定
+    // ===== 型判定ヘルパー =====
+
+    /// @brief C配列かどうかを判定する
     template <typename T>
     constexpr bool is_c_array = std::is_array<T>::value;
 
-    // std::vector 判定
+    /// @brief std::vector かどうかを判定する
     template <typename T>
     struct is_vector : std::false_type {};
 
     template <typename T, typename A>
     struct is_vector<std::vector<T, A>> : std::true_type {};
 
-    // std::array 判定
+    /// @brief std::array かどうかを判定する
     template <typename T>
     struct is_std_array : std::false_type {};
 
     template <typename T, std::size_t N>
     struct is_std_array<std::array<T, N>> : std::true_type {};
 
-    // 総合判定(コンテナかどうか)
+    /// @brief C配列・std::vector・std::array のいずれかかどうかを判定する
     template <typename T>
-    struct is_array_like : std::disjunction< 
+    struct is_array_like : std::disjunction<
         std::is_array<T>,
         is_vector<T>,
         is_std_array<T>
     > {
     };
 
-    // 列挙型(enum / enum class)の場合 → magic_enum で文字列に変換して表示
+    /// @brief 列挙型変数の名前と値をコンソールに表示する。
+    /// magic_enum を使って列挙値を文字列に変換して表示する。
+    /// PRINT_VARIABLE マクロから呼び出される
+    /// @param name 変数名の文字列
+    /// @param var 表示する列挙型変数
+    /// @param color 表示色
     template <typename T>
     std::enable_if_t<std::is_enum<T>::value>
         PrintVariable(const char* name, const T& var, Color color = PRINT_COLOR::DEFAULT)
@@ -51,7 +55,12 @@ namespace DebugPrint
         PrintMessage(outputString.str(), color);
     }
 
-    // 通常型(配列・列挙型以外)
+    /// @brief 通常型変数の名前と値をコンソールに表示する。
+    /// 配列型・列挙型以外の << 演算子が定義された型に対応する。
+    /// PRINT_VARIABLE マクロから呼び出される
+    /// @param name 変数名の文字列
+    /// @param var 表示する変数
+    /// @param color 表示色
     template <typename T>
     std::enable_if_t<!is_array_like<T>::value && !std::is_enum<T>::value>
         PrintVariable(const char* name, const T& var, Color color = PRINT_COLOR::DEFAULT)
@@ -66,7 +75,11 @@ namespace DebugPrint
         PrintMessage(outputString.str(), color);
     }
 
-    // C配列
+    /// @brief C配列の変数名・要素数・各要素の値をコンソールに表示する。
+    /// PRINT_VARIABLE マクロから呼び出される
+    /// @param varName 変数名の文字列
+    /// @param arr 表示するC配列
+    /// @param color 表示色
     template <typename T, std::size_t N>
     void PrintVariable(const std::string& varName, const T(&arr)[N], Color color = PRINT_COLOR::DEFAULT)
     {
@@ -80,7 +93,11 @@ namespace DebugPrint
         PrintMessage(outputString.str(), color);
     }
 
-    // std::vector / std::array 共通
+    /// @brief std::vector または std::array の変数名・要素数・各要素の値をコンソールに表示する。
+    /// PRINT_VARIABLE マクロから呼び出される
+    /// @param varName 変数名の文字列
+    /// @param container 表示するコンテナ
+    /// @param color 表示色
     template <typename Container>
     std::enable_if_t<is_array_like<Container>::value && !std::is_array<Container>::value>
         PrintVariable(const std::string& varName, const Container& container, Color color = PRINT_COLOR::DEFAULT)
@@ -96,4 +113,5 @@ namespace DebugPrint
         }
         PrintMessage(outputString.str(), color);
     }
-}
+
+} // namespace DebugPrint

@@ -3,6 +3,7 @@
 #include <vector>
 
 #if defined(__EMSCRIPTEN__)
+#include <emscripten.h>
 #elif defined(_WIN32)
 #include <windows.h>
 #include <io.h>
@@ -27,18 +28,10 @@ namespace DebugPrint
     public:
 
         /// @brief シングルトンのインスタンスを取得する
-        static DebugPrintConfig& GetInstance()
+        [[nodiscard]] static DebugPrintConfig& GetInstance()
         {
             static DebugPrintConfig instance;
             return instance;
-        }
-
-        /// @brief 言語を切り替える。TemplateStrings に委譲して文字列を再読み込みする
-        /// @param lang 言語コード ("ja" または "en")
-        /// @param languagePath 言語ファイルのディレクトリパス
-        void SetLanguage(const std::string& lang, const std::string& languagePath = "./lang/")
-        {
-            TemplateStrings::GetInstance().SetLanguage(lang, languagePath);
         }
 
         /// @brief 日時フォーマットを変更する。TemplateStrings に委譲する
@@ -60,7 +53,7 @@ namespace DebugPrint
         void SetExitOnError(bool enabled) { m_ExitOnError = enabled; }
 
         /// @brief エラー系マクロ呼び出し時に終了するかどうかを取得する
-        bool IsExitOnError() const { return m_ExitOnError; }
+        [[nodiscard]] bool IsExitOnError() const { return m_ExitOnError; }
 
         // --- 各マクロの表示色設定 ---
 
@@ -80,21 +73,21 @@ namespace DebugPrint
         /// @brief カラー出力が有効かどうかを取得する
         bool  IsColorOutputEnabled()        const { return m_ColorOutputAvailable; }
         /// @brief PRINT_MESSAGE の表示色を取得する
-        Color GetPrintMessageColor()        const { return m_PrintMessageColor; }
+        [[nodiscard]] Color GetPrintMessageColor()        const { return m_PrintMessageColor; }
         /// @brief PRINT_WARNING_MESSAGE の表示色を取得する
-        Color GetPrintWarningMessageColor() const { return m_PrintWarningMessageColor; }
+        [[nodiscard]] Color GetPrintWarningMessageColor() const { return m_PrintWarningMessageColor; }
         /// @brief PRINT_ERROR_MESSAGE の表示色を取得する
-        Color GetPrintErrorMessageColor()   const { return m_PrintErrorMessageColor; }
+        [[nodiscard]] Color GetPrintErrorMessageColor()   const { return m_PrintErrorMessageColor; }
         /// @brief POPUP_MESSAGE の表示色を取得する
-        Color GetPopupMessageColor()        const { return m_PopupMessageColor; }
+        [[nodiscard]] Color GetPopupMessageColor()        const { return m_PopupMessageColor; }
         /// @brief POPUP_WARNING_MESSAGE の表示色を取得する
-        Color GetPopupWarningMessageColor() const { return m_PopupWarningMessageColor; }
+        [[nodiscard]] Color GetPopupWarningMessageColor() const { return m_PopupWarningMessageColor; }
         /// @brief POPUP_ERROR_MESSAGE の表示色を取得する
-        Color GetPopupErrorMessageColor()   const { return m_PopupErrorMessageColor; }
+        [[nodiscard]] Color GetPopupErrorMessageColor()   const { return m_PopupErrorMessageColor; }
 
         /// @brief 蓄積されたログエントリを文字列のリストで取得する。LogWriter に委譲する
         /// @return ログエントリの文字列リスト
-        const std::vector<std::string>& GetLogStrings() const
+        [[nodiscard]] const std::vector<std::string>& GetLogStrings() const
         {
             return LogWriter::GetInstance().GetEntries();
         }
@@ -128,7 +121,14 @@ namespace DebugPrint
         static bool CheckColorOutputAvailable()
         {
 #if defined(__EMSCRIPTEN__)
-            return false;
+            // Node.js 環境かどうかを確認する
+            // EM_ASM_INT はJavaScriptのコードをC++から実行して整数値を返す関数
+            int isNode = EM_ASM_INT({
+                return typeof process !== 'undefined' &&
+                       process.stdout !== undefined &&
+                       process.stdout.isTTY ? 1 : 0;        
+            });
+            return (isNode == 1);
 #elif defined(_WIN32)
             if (!_isatty(_fileno(stdout))) return false;
 

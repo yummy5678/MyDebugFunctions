@@ -4,7 +4,19 @@
 #include <string>
 #include <cstdlib>
 
-#include "tinyfiledialogs/tinyfiledialogs.h"
+
+#ifndef __EMSCRIPTEN__
+    #ifdef DEBUG_PRINT_IMPLEMENTATION
+    /* ファイルの改変あり
+        666行目・724行目のchar*およびwchar_t*にconstを追加。
+        C++コンパイラでのコンパイルに対応するための修正。 */
+    #include "../third_party/tinyfiledialogs/tinyfiledialogs.c"
+    #endif
+    #include "../third_party/tinyfiledialogs/tinyfiledialogs.h"
+#endif
+
+
+
 #include "ColorDefine.h"
 #include "TemplateStrings.h"
 #include "DebugPrintConfig.h"
@@ -99,10 +111,26 @@ namespace DebugPrint
     inline void ShowPopup(const std::string& message, PopupIcon icon)
     {
 #if defined(__EMSCRIPTEN__)
-        EM_JS(void, js_alert, (const char* msg), {
+    // アイコン種別に応じたASCIIテキストをメッセージの先頭に付ける
+    std::string prefix;
+    switch (icon)
+    {
+    case PopupIcon::Info:     prefix = "[INFO] ";     break;
+    case PopupIcon::Warning:  prefix = "[WARNING] ";  break;
+    case PopupIcon::Error:    prefix = "[ERROR] ";    break;
+    case PopupIcon::Question: prefix = "[QUESTION] "; break;
+    default:                  prefix = "";            break;
+    }
+    const std::string decoratedMessage = prefix + message;
+
+    EM_JS(void, js_show_popup, (const char* msg), {
+        if (typeof window !== 'undefined') {
             window.alert(UTF8ToString(msg));
-            });
-        js_alert(message.c_str());
+        } else {
+            process.stderr.write(UTF8ToString(msg) + '\n');
+        }
+    });
+    js_show_popup(decoratedMessage.c_str());
 #else
         tinyfd_messageBox(
             errorDialogTitle().c_str(),

@@ -6,7 +6,7 @@
 #include "PrintFunction.h"
 #include "TemplateStrings.h"
 #include "PrintVariable.h"
-#include "magic_enum/magic_enum.hpp"
+#include "../third_party/magic_enum/magic_enum.hpp"
 
 namespace DebugPrint
 {
@@ -14,8 +14,8 @@ namespace DebugPrint
     template <typename T>
     void PrintStructMembers(const T& var, Color color, int indent);
 
-    // Boost.PFR で扱える集成体かどうかの判定ヘルパー。
-    // 集成体 = 継承なし・仮想関数なし・ユーザー定義コンストラクタなし
+    /// @brief Boost.PFR で扱える集成体かどうかを判定するヘルパー。
+    /// 集成体の条件: 継承なし・仮想関数なし・ユーザー定義コンストラクタなし
     template <typename T>
     struct is_reflectable
     {

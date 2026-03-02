@@ -1,3 +1,7 @@
+/* 改変箇所：666行目・724行目のchar*およびwchar_t*にconstを追加。
+   C++コンパイラでのコンパイルに対応するための修正。 */
+
+
 /*_________
  /         \ tinyfiledialogs.c v2.9.3 [July 12, 2017] zlib licence
  |tiny file| Unique code file created [November 9, 2014]
@@ -663,7 +667,9 @@ static void runSilentA(char const * const aString)
 	PROCESS_INFORMATION ProcessInfo;
 	char * lArgs;
 	char * pEnvCMD = NULL;
-	char * pDefaultCMD = "CMD.EXE";
+
+	/* C++コンパイラでのビルドに対応するためconstを追加（元のコードはcharのみ） */
+	const char * pDefaultCMD = "CMD.EXE";
 	ULONG rc;
 	int lStringLen = 0;
 
@@ -721,7 +727,10 @@ static void runSilentW(wchar_t const * const aString)
 	ULONG rc;
 	wchar_t * lArgs;
 	wchar_t * pEnvCMD;
-	wchar_t * pDefaultCMD = L"CMD.EXE";
+
+	/* C++コンパイラでのビルドに対応するためconstを追加（元のコードはwchar_tのみ） */
+	const wchar_t* pDefaultCMDW = L"CMD.EXE";
+	const wchar_t * pDefaultCMD = L"CMD.EXE";
 	int lStringLen = 0;
 
 	memset(&StartupInfo, 0, sizeof(StartupInfo));

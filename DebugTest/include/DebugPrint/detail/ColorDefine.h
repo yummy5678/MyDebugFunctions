@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 #include <string>
 
 
@@ -13,7 +12,7 @@ constexpr uint8_t MAX_ALPHA_VALUE = MAX_SINGLE_COLOR_VALUE; // 最大色
 using Color = uint32_t;
 
 // R, G, B, A (0～255) を1つのuint32_tにまとめる (RGBA順)
-constexpr Color MakeColorCode(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha = DEFAULT_ALPHA_VALUE) noexcept
+[[nodiscard]] constexpr Color MakeColorCode(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha = DEFAULT_ALPHA_VALUE) noexcept
 {
     return 
         (static_cast<uint32_t>(red)     << 24)  |
@@ -47,7 +46,7 @@ enum PRINT_COLOR
 
 
 // RGBで指定した色の文字列を生成(True Color対応)
-inline std::string MakeColorCode(Color color = PRINT_COLOR::DEFAULT)
+[[nodiscard]] inline std::string MakeColorCode(Color color = PRINT_COLOR::DEFAULT)
 {
     uint8_t alpha = static_cast<uint8_t>((color >> 0)  & 0xFF);
 
@@ -59,9 +58,9 @@ inline std::string MakeColorCode(Color color = PRINT_COLOR::DEFAULT)
 
     float alphaRatio = (float)alpha / 255;
 
-    uint8_t blue  = static_cast<uint8_t>((color >> 8)  & 0xFF)  * alphaRatio;
-    uint8_t green = static_cast<uint8_t>((color >> 16) & 0xFF)  * alphaRatio;
-    uint8_t red   = static_cast<uint8_t>((color >> 24) & 0xFF)  * alphaRatio;
+    uint8_t blue  = static_cast<uint8_t>(((color >> 8)  & 0xFF) * alphaRatio);
+    uint8_t green = static_cast<uint8_t>(((color >> 16) & 0xFF) * alphaRatio);
+    uint8_t red   = static_cast<uint8_t>(((color >> 24) & 0xFF) * alphaRatio);
 
 
     return "\033[38;2;" + 

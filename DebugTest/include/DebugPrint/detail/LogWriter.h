@@ -17,7 +17,7 @@ namespace DebugPrint
     public:
 
         /// @brief シングルトンのインスタンスを取得する
-        static LogWriter& GetInstance()
+        [[nodiscard]] static LogWriter& GetInstance()
         {
             static LogWriter instance;
             return instance;
@@ -32,7 +32,7 @@ namespace DebugPrint
 
         /// @brief 蓄積されたログエントリを文字列のリストで取得する
         /// @return ログエントリの文字列リスト
-        const std::vector<std::string>& GetEntries() const
+        [[nodiscard]] const std::vector<std::string>& GetEntries() const
         {
             return m_Entries;
         }
@@ -76,7 +76,7 @@ namespace DebugPrint
         }
 
         /// @brief 蓄積されているエントリ数を取得する
-        size_t GetEntryCount() const { return m_Entries.size(); }
+        [[nodiscard]] size_t GetEntryCount() const { return m_Entries.size(); }
 
         // コピー・ムーブ禁止
         LogWriter(const LogWriter&) = delete;
