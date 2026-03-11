@@ -3,7 +3,7 @@
 #include <vector>
 
 #if defined(__EMSCRIPTEN__)
-#include <emscripten.h>
+#include "EmscriptenFunctions.h"
 #elif defined(_WIN32)
 #include <windows.h>
 #include <io.h>
@@ -111,6 +111,9 @@ namespace DebugPrint
         DebugPrintConfig()
             : m_ColorOutputAvailable(CheckColorOutputAvailable())
         {
+#if defined(__EMSCRIPTEN__)
+            js_register_helpers();
+#endif
         }
 
         /// @brief 端末がカラー出力(ANSIエスケープコード)に対応しているか確認する。
@@ -121,14 +124,8 @@ namespace DebugPrint
         static bool CheckColorOutputAvailable()
         {
 #if defined(__EMSCRIPTEN__)
-            // Node.js 環境かどうかを確認する
-            // EM_ASM_INT はJavaScriptのコードをC++から実行して整数値を返す関数
-            int isNode = EM_ASM_INT({
-                return typeof process !== 'undefined' &&
-                       process.stdout !== undefined &&
-                       process.stdout.isTTY ? 1 : 0;        
-            });
-            return (isNode == 1);
+            return (js_is_color_output_available() == 1);
+
 #elif defined(_WIN32)
             if (!_isatty(_fileno(stdout))) return false;
 
@@ -144,6 +141,7 @@ namespace DebugPrint
 
             SetConsoleMode(hOut, dwMode);  // 副作用防止のため元に戻す
             return true;
+
 #else
             if (!isatty(STDOUT_FILENO)) return false;
 

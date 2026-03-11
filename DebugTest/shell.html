@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DebugTest</title>
+
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            font-family: "Consolas", "MS Gothic", monospace;
+            margin: 0;
+            padding: 16px;
+        }
+
+        #output {
+            white-space: pre-wrap;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        #status {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="status">読み込み中...</div>
+    <div id="output"></div>
+
+    <script type="text/javascript">
+
+        // ===== Emscripten Module 設定 =====
+
+        // Emscripten の Module オブジェクト。
+        // テキスト出力は js_print / js_print_error が #output に直接書き込むため
+        // print / printErr では何もしない
+        var Module = {
+            print: function(text) { },
+            printErr: function(text) { },
+
+            // ランタイムの準備完了時にステータス表示を更新する
+            onRuntimeInitialized: function() {
+                document.getElementById('status').textContent = '実行中';
+            },
+
+            // 読み込み状況をステータス欄に表示する
+            setStatus: function(text) {
+                if (text) document.getElementById('status').textContent = text;
+            }
+        };
+    </script>
+
+    {{{ SCRIPT }}}
+</body>
+</html>

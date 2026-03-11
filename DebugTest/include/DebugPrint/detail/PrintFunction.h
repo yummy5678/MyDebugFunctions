@@ -13,6 +13,9 @@
     #include "../third_party/tinyfiledialogs/tinyfiledialogs.c"
     #endif
     #include "../third_party/tinyfiledialogs/tinyfiledialogs.h"
+#else
+    // Emscripten 環境用の JavaScript 関数定義を読み込む
+    #include "EmscriptenFunctions.h"
 #endif
 
 
@@ -54,6 +57,18 @@ namespace DebugPrint
     /// @param color 表示色
     inline void PrintMessage(const std::string& message, Color color = PRINT_COLOR::DEFAULT)
     {
+#if defined(__EMSCRIPTEN__)
+
+        if (DebugPrintConfig::GetInstance().IsColorOutputEnabled())
+        {
+            js_print(message.c_str(), color);
+        }
+        else
+        {
+            js_print(message.c_str(), PRINT_COLOR::DEFAULT);
+        }
+
+#else
         if (DebugPrintConfig::GetInstance().IsColorOutputEnabled())
         {
             std::cout << MakeColorCode(color) << message << MakeColorCode(PRINT_COLOR::DEFAULT) << std::flush;
@@ -62,14 +77,28 @@ namespace DebugPrint
         {
             std::cout << message << std::flush;
         }
+#endif
     }
 
     /// @brief メッセージを標準エラー出力に表示する基本関数。
     /// 指定色でメッセージを表示する
     /// @param message 表示するメッセージ
     /// @param color 表示色
-    inline void PrintErrMessage(const std::string& message, Color color = PRINT_COLOR::DEFAULT)
+    inline void PrintErrorMessage(const std::string& message, Color color = PRINT_COLOR::DEFAULT)
     {
+#if defined(__EMSCRIPTEN__)
+
+        if (DebugPrintConfig::GetInstance().IsColorOutputEnabled())
+        {
+            js_print_error(message.c_str(), color);
+        }
+        else
+        {
+            js_print_error(message.c_str(), PRINT_COLOR::DEFAULT);
+        }
+
+
+#else
         if (DebugPrintConfig::GetInstance().IsColorOutputEnabled())
         {
             std::cerr << MakeColorCode(color) << message << MakeColorCode(PRINT_COLOR::DEFAULT) << std::flush;
@@ -78,6 +107,7 @@ namespace DebugPrint
         {
             std::cerr << message << std::flush;
         }
+#endif
     }
 
     /// @brief エラー・警告情報を標準エラー出力に表示する内部共通処理。
@@ -101,36 +131,47 @@ namespace DebugPrint
             << functionNameString() << pairSeparatorString() << funcName << "\n"
             << message << "\n"
             << separatorString();
-        PrintErrMessage(out.str(), color);
+        PrintErrorMessage(out.str(), color);
     }
 
     /// @brief ポップアップダイアログを表示する内部共通処理。
-    /// Emscripten ではブラウザの alert を使用し、それ以外は tinyfiledialogs を使用する
+    /// Emscripten ではブラウザの SweetAlert2 を使用したモーダルダイアログを表示し、
+    /// それ以外は tinyfiledialogs を使用する。
+    /// ファイル名・関数名が渡された場合はダイアログ内の詳細情報欄にも表示する。
+    /// SweetAlert2 の Swal.fire() は Promise を返すため、C++ 側はダイアログの
+    /// 閉じるのを待たずに即リターンする（-sASYNCIFY 不要）。
+    /// Node.js 環境では SweetAlert2 が使えないため stderr に出力してフォールバックする
     /// @param message 表示するメッセージ
     /// @param icon アイコン種別
-    inline void ShowPopup(const std::string& message, PopupIcon icon)
+    /// @param funcName 呼び出し元の関数名。nullptr の場合は詳細情報を表示しない
+    /// @param fileName 呼び出し元のファイル名。nullptr の場合は詳細情報を表示しない
+    /// @param lineNumber 呼び出し元の行番号
+    inline void ShowPopup(
+        const std::string& message,
+        PopupIcon icon,
+        const char* funcName  = nullptr,
+        const char* fileName  = nullptr,
+        int         lineNumber = 0)
     {
 #if defined(__EMSCRIPTEN__)
-    // アイコン種別に応じたASCIIテキストをメッセージの先頭に付ける
-    std::string prefix;
-    switch (icon)
-    {
-    case PopupIcon::Info:     prefix = "[INFO] ";     break;
-    case PopupIcon::Warning:  prefix = "[WARNING] ";  break;
-    case PopupIcon::Error:    prefix = "[ERROR] ";    break;
-    case PopupIcon::Question: prefix = "[QUESTION] "; break;
-    default:                  prefix = "";            break;
-    }
-    const std::string decoratedMessage = prefix + message;
-
-    EM_JS(void, js_show_popup, (const char* msg), {
-        if (typeof window !== 'undefined') {
-            window.alert(UTF8ToString(msg));
-        } else {
-            process.stderr.write(UTF8ToString(msg) + '\n');
+        // ファイル名・行番号・関数名の情報を HTML 形式で組み立てる。
+        // ファイル名または関数名が渡されていない場合は詳細情報を表示しない
+        std::ostringstream detail;
+        if (fileName != nullptr && funcName != nullptr)
+        {
+            detail << "<hr style='margin:8px 0'>"
+                   << "<div style='text-align:left; font-size:0.85em; color:#666'>"
+                   << fileString()         << pairSeparatorString() << fileName   << "<br>"
+                   << LineNumberString()   << pairSeparatorString() << lineNumber << "<br>"
+                   << functionNameString() << pairSeparatorString() << funcName
+                   << "</div>";
         }
-    });
-    js_show_popup(decoratedMessage.c_str());
+        const std::string htmlDetail = detail.str();
+
+
+        js_show_popup(message.c_str(), PopupIconToString(icon), htmlDetail.c_str());
+
+
 #else
         tinyfd_messageBox(
             errorDialogTitle().c_str(),
@@ -181,17 +222,18 @@ namespace DebugPrint
     }
 
     /// @brief POPUP_MESSAGE マクロから呼び出されるポップアップ表示処理。
-    /// Config の POPUP_MESSAGE 用の色でコンソールに表示し、ポップアップを表示する。アプリは継続する
+    /// Config の POPUP_MESSAGE 用の色でコンソールに表示し、ポップアップを表示する。
+    /// ファイル名・行番号などの詳細情報は表示しない。アプリは継続する
     /// @param message 表示するメッセージ
     /// @param icon アイコン種別
     inline void ShowPopupMessage(const std::string& message, PopupIcon icon)
     {
-        PrintMessage(message, DebugPrintConfig::GetInstance().GetPopupMessageColor());
         ShowPopup(message, icon);
     }
 
     /// @brief POPUP_WARNING_MESSAGE マクロから呼び出される警告ポップアップ表示処理。
-    /// Config の POPUP_WARNING_MESSAGE 用の色でコンソールに表示し、警告アイコン付きポップアップを表示する。アプリは継続する
+    /// Config の POPUP_WARNING_MESSAGE 用の色でコンソールに表示し、
+    /// 警告アイコン付きポップアップにファイル名・行番号・関数名も含めて表示する。アプリは継続する
     /// @param message 警告メッセージ
     /// @param funcName 呼び出し元の関数名
     /// @param fileName 呼び出し元のファイル名
@@ -202,13 +244,12 @@ namespace DebugPrint
         const char* fileName,
         int lineNumber)
     {
-        PrintAppErrorInfo(message, funcName, fileName, lineNumber,
-            DebugPrintConfig::GetInstance().GetPopupWarningMessageColor());
-        ShowPopup(message, PopupIcon::Warning);
+        ShowPopup(message, PopupIcon::Warning, funcName, fileName, lineNumber);
     }
 
     /// @brief POPUP_ERROR_MESSAGE マクロから呼び出されるエラーポップアップ表示処理。
-    /// Config の POPUP_ERROR_MESSAGE 用の色でコンソールに表示し、エラーアイコン付きポップアップを表示する。
+    /// Config の POPUP_ERROR_MESSAGE 用の色でコンソールに表示し、
+    /// エラーアイコン付きポップアップにファイル名・行番号・関数名も含めて表示する。
     /// IsExitOnError() が true の場合はアプリを終了する
     /// @param message エラーメッセージ
     /// @param funcName 呼び出し元の関数名
@@ -220,10 +261,9 @@ namespace DebugPrint
         const char* fileName,
         int lineNumber)
     {
-        PrintAppErrorInfo(message, funcName, fileName, lineNumber,
-            DebugPrintConfig::GetInstance().GetPopupErrorMessageColor());
-        ShowPopup(message, PopupIcon::Error);
+        ShowPopup(message, PopupIcon::Error, funcName, fileName, lineNumber);
 
+        // エラー時の強制終了フラグが立っていたら終了させる
         if (DebugPrintConfig::GetInstance().IsExitOnError())
         {
             std::exit(EXIT_FAILURE);
