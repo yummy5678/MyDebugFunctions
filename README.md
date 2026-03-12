@@ -17,6 +17,34 @@ WebAssembly版をブラウザで試せます：
 - ログファイル書き出し
 - 多言語対応（日本語・英語）
 
+## 使用例
+```cpp
+#define DEBUG_PRINT_IMPLEMENTATION
+#include "DebugPrint/DebugPrint.h"
+
+int main()
+{
+    // メッセージ出力
+    PRINT_MESSAGE("通常メッセージ\n");
+    PRINT_WARNING_MESSAGE("警告\n");
+    PRINT_ERROR_MESSAGE("エラー\n");
+
+    // 変数・構造体の自動表示
+    int value = 42;
+    PRINT_VARIABLE(value);    // "value = 42"
+
+    struct Vec3 { float x, y, z; };
+    Vec3 pos = { 1.0f, 2.0f, 3.0f };
+    PRINT_STRUCT(pos);        // メンバーを自動展開
+
+    // ポップアップダイアログ
+    POPUP_MESSAGE("ポップアップ表示");
+
+    // 関数・クラスのトレース
+    PRINT_TRACE_FUNCTION;
+}
+```
+
 
 ## ライセンス
 
