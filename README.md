@@ -44,7 +44,13 @@ int main()
     PRINT_TRACE_FUNCTION;
 }
 ```
+## サードパーティライブラリ
 
+- [Boost.PFR](https://github.com/boostorg/pfr) - Boost Software License 1.0
+- [magic_enum](https://github.com/Neargye/magic_enum) - MIT License
+- [RapidJSON](https://github.com/Tencent/rapidjson) - MIT License
+- [SweetAlert2](https://github.com/sweetalert2/sweetalert2) - MIT License
+- [tinyfiledialogs](https://sourceforge.net/projects/tinyfiledialogs/) - zlib License
 
 ## ライセンス
 
